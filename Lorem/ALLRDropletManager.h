@@ -31,6 +31,8 @@
 - (void)takeSnapshotOfDroplet:(ALLRDroplet *)droplet withName:(NSString *)name completion:(void (^)(BOOL))completion;
 - (void)resetRootPasswordForDroplet:(ALLRDroplet *)droplet completion:(void (^)(BOOL))completion;
 
+- (void)destroyDroplet:(ALLRDroplet *)droplet completion:(void (^)(BOOL))completion; //Be very careful with this.
+
 - (ALLRDroplet *)dropletWithID:(NSUInteger)id;
 
 @property (nonatomic, retain) NSArray *droplets;

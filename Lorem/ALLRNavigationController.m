@@ -7,12 +7,21 @@
 //
 
 #import "ALLRNavigationController.h"
+#import "ALLRLoginViewController.h"
 
 @interface ALLRNavigationController ()
 
 @end
 
 @implementation ALLRNavigationController
+
+- (void)requireLogin{
+    ALLRLoginViewController *loginViewController = [[ALLRLoginViewController alloc] init];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self popToRootViewControllerAnimated:YES];
+        [self pushViewController:loginViewController animated:YES];
+    });
+}
 
 - (instancetype)initWithRootViewController:(UIViewController *)rootViewController{
     if(self = [super initWithNavigationBarClass:[UINavigationBar class] toolbarClass:[UIToolbar class]]){
@@ -22,6 +31,7 @@
         self.navigationBar.translucent = NO;
         [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor whiteColor]}];
         self.viewControllers = @[rootViewController];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(requireLogin) name:@"com.aehmlo.lorem/loginRequired" object:nil];
     }
     return self;
 }

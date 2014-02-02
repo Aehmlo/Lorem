@@ -69,6 +69,36 @@
             };
             [as showInView:self.view];
             break;
+        }case 3:{
+            UIActionSheet *_as = [[UIActionSheet alloc] initWithTitle:@"Destroying a droplet cannot be undone. Please make sure you've backed up everything you need before continuing."
+                                                            delegate:nil
+                                                   cancelButtonTitle:@"Cancel"
+                                              destructiveButtonTitle:@"Destroy Droplet"
+                                                   otherButtonTitles:nil];
+            
+            _as.actionSheetStyle = UIActionSheetStyleAutomatic;
+            _as.tapBlock = ^(UIActionSheet *sheet, NSInteger index){
+                if(index) return;
+                UIActionSheet *as = [[UIActionSheet alloc] initWithTitle:@"Are you absolutely sure you want to destroy your droplet?"
+                                                                delegate:nil
+                                                       cancelButtonTitle:@"Cancel"
+                                                  destructiveButtonTitle:@"Destroy Droplet"
+                                                       otherButtonTitles:nil];
+                
+                as.actionSheetStyle = UIActionSheetStyleAutomatic;
+                as.tapBlock = ^(UIActionSheet *actionSheet, NSInteger buttonIndex){
+                    if(buttonIndex==0){
+                        [[ALLRDropletManager sharedManager] destroyDroplet:self.droplet completion:^(BOOL success){
+                            [[ALLRDropletManager sharedManager] reloadDropletsWithCompletion:^(BOOL success){
+                                [self.navigationController popToRootViewControllerAnimated:YES];
+                            }];
+                        }];
+                    }
+                };
+                [as showInView:self.view];
+            };
+            [_as showInView:self.view];
+            break;
         }case 0:{
             pv = [[UIPickerView alloc] initWithFrame:(CGRect){{0, self.view.bounds.size.height-200},{self.view.bounds.size.width, 200}}];
             pv.delegate = self;

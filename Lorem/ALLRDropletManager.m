@@ -58,7 +58,12 @@ static dispatch_once_t token;
         NSUInteger event = [[timer userInfo][@"Event"] unsignedIntegerValue];
         NSLog(@"Timer is valid: %@", [timer isValid]?@"YES":@"NO");
         [manager GET:[NSString stringWithFormat:@"https://api.digitalocean.com/events/%lu", (unsigned long)event] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject){
-            if(![responseObject[@"status"] isKindOfClass:[NSNull class]] && [responseObject[@"status"] isEqualToString:@"OK"] && ![responseObject[@"event"][@"percentage"] isKindOfClass:[NSNull class]] && [responseObject[@"event"][@"percentage"] integerValue]==100){
+            if(operation.response.statusCode == 401){
+                if(completion) completion(NO);
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+                return;
+            }
+            else if(![responseObject[@"status"] isKindOfClass:[NSNull class]] && [responseObject[@"status"] isEqualToString:@"OK"] && ![responseObject[@"event"][@"percentage"] isKindOfClass:[NSNull class]] && [responseObject[@"event"][@"percentage"] integerValue]==100){
                 NSLog(@"Should be invoking the completion block right about now...");
                 if(completion) completion(YES);
                 NSLog(@"Success!");
@@ -84,6 +89,30 @@ static dispatch_once_t token;
     });
 }
 
+- (void)destroyDroplet:(ALLRDroplet *)droplet completion:(void (^)(BOOL))completion{
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    if(![[ALLRCredentialManager sharedManager] hasCredentials]){
+        if(completion) completion(NO);
+        return;
+    }
+    NSDictionary *params = @{@"client_id": [[ALLRCredentialManager sharedManager] clientID],
+                             @"api_key": [[ALLRCredentialManager sharedManager] APIKey]
+                             };
+    [manager GET:[NSString stringWithFormat:@"https://api.digitalocean.com/droplets/%lu/destroy", (unsigned long)droplet.id] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject){ //Snivel.
+        if(operation.response.statusCode == 401){
+            if(completion) completion(NO);
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+            return;
+        }
+        else if([responseObject[@"status"] isEqualToString:@"OK"]){
+            droplet.locked = YES;
+            [self invokeCompletion:^(BOOL success){droplet.locked = NO; if(completion) completion(success);}whenEventFinishes:[responseObject[@"event_id"] unsignedIntegerValue]];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+        NSLog(@"%@", error);
+    }];
+}
+
 - (void)takeSnapshotOfDroplet:(ALLRDroplet *)droplet withName:(NSString *)name completion:(void (^)(BOOL))completion{
     [self shutDownDroplet:droplet completion:^(BOOL _completion){
         if(!_completion){
@@ -100,7 +129,12 @@ static dispatch_once_t token;
             [params setObject:name forKey:@"name"];
         }
         [manager GET:[NSString stringWithFormat:@"https://api.digitalocean.com/droplets/%lu/snapshot", (unsigned long)droplet.id] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject){
-            if([responseObject[@"status"] isEqualToString:@"OK"]){
+            if(operation.response.statusCode == 401){
+                if(completion) completion(NO);
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+                return;
+            }
+            else if([responseObject[@"status"] isEqualToString:@"OK"]){
                 droplet.locked = YES;
                 [self invokeCompletion:^(BOOL success){droplet.locked = NO; if(completion) completion(success);}whenEventFinishes:[responseObject[@"event_id"] unsignedIntegerValue]];
             }
@@ -126,7 +160,12 @@ static dispatch_once_t token;
                                  @"size_id" : @(size)
                                  };
         [manager GET:[NSString stringWithFormat:@"https://api.digitalocean.com/droplets/%lu/resize", (unsigned long)droplet.id] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject){
-            if([responseObject[@"status"] isEqualToString:@"OK"]){
+            if(operation.response.statusCode == 401){
+                if(completion) completion(NO);
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+                return;
+            }
+            else if([responseObject[@"status"] isEqualToString:@"OK"]){
                 droplet.locked = YES;
                 [self invokeCompletion:^(BOOL success){droplet.locked = NO; if(completion) completion(success);}whenEventFinishes:[responseObject[@"event_id"] unsignedIntegerValue]];
             }
@@ -146,7 +185,12 @@ static dispatch_once_t token;
                              @"api_key": [[ALLRCredentialManager sharedManager] APIKey]
                              };
     [manager GET:[NSString stringWithFormat:@"https://api.digitalocean.com/droplets/%lu/shutdown", (unsigned long)droplet.id] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject){
-        if([responseObject[@"status"] isEqualToString:@"OK"]){
+        if(operation.response.statusCode == 401){
+            if(completion) completion(NO);
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+            return;
+        }
+        else if([responseObject[@"status"] isEqualToString:@"OK"]){
             droplet.locked = YES;
             [self invokeCompletion:^(BOOL success){droplet.locked = NO; if(completion) completion(success);}/*^(BOOL success){
                 if(success) [self powerOffDroplet:droplet completion:completion];
@@ -167,7 +211,12 @@ static dispatch_once_t token;
                              @"api_key": [[ALLRCredentialManager sharedManager] APIKey]
                              };
     [manager GET:[NSString stringWithFormat:@"https://api.digitalocean.com/droplets/%lu/power_off", (unsigned long)droplet.id] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject){
-        if([responseObject[@"status"] isEqualToString:@"OK"]){
+        if(operation.response.statusCode == 401){
+            if(completion) completion(NO);
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+            return;
+        }
+        else if([responseObject[@"status"] isEqualToString:@"OK"]){
             droplet.locked = YES;
             [self invokeCompletion:^(BOOL success){droplet.locked = NO; if(completion) completion(success); } whenEventFinishes:[responseObject[@"event_id"] unsignedIntegerValue]];
         }
@@ -191,7 +240,12 @@ static dispatch_once_t token;
                              @"api_key": [[ALLRCredentialManager sharedManager] APIKey]
                              };
     [manager GET:[NSString stringWithFormat:@"https://api.digitalocean.com/droplets/%lu/password_reset", (unsigned long)droplet.id] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject){
-        if([responseObject[@"status"] isEqualToString:@"OK"]){
+        if(operation.response.statusCode == 401){
+            if(completion) completion(NO);
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+            return;
+        }
+        else if([responseObject[@"status"] isEqualToString:@"OK"]){
             droplet.locked = YES;
             [self invokeCompletion:^(BOOL success){droplet.locked = NO; if(completion) completion(success);} whenEventFinishes:[responseObject[@"event_id"] unsignedIntegerValue]];
         }
@@ -212,7 +266,12 @@ static dispatch_once_t token;
                              @"api_key": [[ALLRCredentialManager sharedManager] APIKey]
                              };
     [manager GET:[NSString stringWithFormat:@"https://api.digitalocean.com/droplets/%lu/power_on", (unsigned long)droplet.id] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject){
-        if([responseObject[@"status"] isEqualToString:@"OK"]){
+        if(operation.response.statusCode == 401){
+            if(completion) completion(NO);
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+            return;
+        }
+        else if([responseObject[@"status"] isEqualToString:@"OK"]){
             droplet.locked = YES;
             [self invokeCompletion:^(BOOL success){droplet.locked = NO; if(completion) completion(success);} whenEventFinishes:[responseObject[@"event_id"] unsignedIntegerValue]];
         }
@@ -235,7 +294,12 @@ static dispatch_once_t token;
                              @"api_key": [[ALLRCredentialManager sharedManager] APIKey]
                              };
     [manager GET:[NSString stringWithFormat:@"https://api.digitalocean.com/droplets/%lu/reboot", (unsigned long)droplet.id] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject){
-        if([responseObject[@"status"] isEqualToString:@"OK"]){
+        if(operation.response.statusCode == 401){
+            if(completion) completion(NO);
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+            return;
+        }
+        else if([responseObject[@"status"] isEqualToString:@"OK"]){
             droplet.locked = YES;
             [self invokeCompletion:^(BOOL success){droplet.locked = NO; if(completion) completion(success);} whenEventFinishes:[responseObject[@"event_id"] unsignedIntegerValue]];
         }
@@ -258,7 +322,12 @@ static dispatch_once_t token;
                              @"api_key": [[ALLRCredentialManager sharedManager] APIKey],
                              @"name": name};
     [manager GET:[NSString stringWithFormat:@"https://api.digitalocean.com/droplets/%lu/rename", (unsigned long)droplet.id] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject){
-        if(responseObject && [responseObject[@"status"] isEqualToString:@"OK"] && completion){
+        if(operation.response.statusCode == 401){
+            if(completion) completion(NO);
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+            return;
+        }
+        else if(responseObject && [responseObject[@"status"] isEqualToString:@"OK"] && completion){
             droplet.locked = YES;
             [self invokeCompletion:^(BOOL success){droplet.locked = NO; if(completion) completion(success);} whenEventFinishes:[responseObject[@"event_id"] unsignedIntegerValue]];
         }

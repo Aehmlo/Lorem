@@ -22,6 +22,7 @@
 - (void)updateGlobalImagesWithCompletion:(void (^)(BOOL success))completion;
 
 - (NSString *)sizeStringForSizeID:(NSUInteger)sizeID;
+- (NSUInteger)indexForSizeID:(NSUInteger)sizeID;
 
 @property (nonatomic, retain) NSArray *sizes;
 @property (nonatomic, retain) NSArray *myImages;

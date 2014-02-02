@@ -129,6 +129,8 @@ static BOOL stringIsValidName(NSString *string){
             pv.delegate = self;
             pv.dataSource = self;
             pv.showsSelectionIndicator = YES;
+            [pv reloadAllComponents];
+            [pv selectRow:[[ALLRMiscellaneousAPIInfoManager sharedManager] indexForSizeID:self.droplet.sizeID] inComponent:0 animated:NO];
             [self.view addSubview:pv];
             toolbar = [[UIToolbar alloc] initWithFrame:(CGRect){{0, self.view.bounds.size.height},{self.view.bounds.size.width, 44}}];
             UIBarButtonItem *middleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];

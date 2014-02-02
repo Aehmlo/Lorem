@@ -128,4 +128,11 @@ static ALLRMiscellaneousAPIInfoManager *sharedManager; //Wow, that's a mouthful.
     return @"Unknown";
 }
 
+- (NSUInteger)indexForSizeID:(NSUInteger)sizeID{
+    for(NSUInteger i=0; i<[self.sizes count]; i++){
+        if([self.sizes[i][@"id"] unsignedIntegerValue]==sizeID) return i;
+    }
+    return 0;
+}
+
 @end

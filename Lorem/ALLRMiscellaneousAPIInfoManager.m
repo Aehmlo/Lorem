@@ -101,4 +101,31 @@ static ALLRMiscellaneousAPIInfoManager *sharedManager; //Wow, that's a mouthful.
     }];
 }
 
+- (void)updateSSHKeysWithCompletion:(void (^)(BOOL success))completion{
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    if(![[ALLRCredentialManager sharedManager] hasCredentials]){
+        if(completion) completion(NO);
+        return;
+    }
+    NSDictionary *params = @{@"client_id": [[ALLRCredentialManager sharedManager] clientID],
+                             @"api_key": [[ALLRCredentialManager sharedManager] APIKey]
+                             };
+    [manager GET:@"https://api.digitalocean.com/ssh_keys" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject){
+        if([responseObject[@"status"] isEqualToString:@"OK"]){
+            self.SSHKeys = responseObject[@"ssh_keys"];
+            if (completion) completion(YES);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+        completion(NO);
+        NSLog(@"%@", error);
+    }];
+}
+
+- (NSString *)sizeStringForSizeID:(NSUInteger)sizeID{
+    for(NSDictionary *_size in self.sizes){
+        if([_size[@"id"] unsignedIntegerValue]==sizeID) return [[_size[@"name"] stringByReplacingOccurrencesOfString:@"MB" withString:@" MB"] stringByReplacingOccurrencesOfString:@"GB" withString:@" GB"];
+    }
+    return @"Unknown";
+}
+
 @end

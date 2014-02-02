@@ -24,7 +24,7 @@ static BOOL stringIsValidName(NSString *string){
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return 6;
+    return 7;
 }
 
 - (void)dropletManagerDidUpdate{
@@ -124,7 +124,27 @@ static BOOL stringIsValidName(NSString *string){
                 [as showInView:self.view];
             }
             break;
-        }case 5:{
+        }case 2:{
+            pv = [[UIPickerView alloc] initWithFrame:(CGRect){{0, self.view.bounds.size.height+44},{self.view.bounds.size.width, 200}}];
+            pv.delegate = self;
+            pv.dataSource = self;
+            pv.showsSelectionIndicator = YES;
+            [self.view addSubview:pv];
+            toolbar = [[UIToolbar alloc] initWithFrame:(CGRect){{0, self.view.bounds.size.height},{self.view.bounds.size.width, 44}}];
+            UIBarButtonItem *middleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+            UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancelButtonTapped)];
+            cancelButton.tintColor = [UIColor DOBlueColor];
+            UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(doneButtonTapped)];
+            doneButton.tintColor = [UIColor DOBlueColor];
+            [toolbar setItems:@[cancelButton, middleSpace, doneButton]];
+            [self.view addSubview:toolbar];
+            self.tableViewController.tableView.userInteractionEnabled = NO;
+            [UIView animateWithDuration:0.25f animations:^{
+                pv.frame = (CGRect){{0, pv.frame.origin.y-244},{pv.frame.size.width, pv.frame.size.height}};
+                toolbar.frame = (CGRect){{0, toolbar.frame.origin.y-244},{toolbar.frame.size.width, toolbar.frame.size.height}};
+            }];
+            break;
+        }case 6:{
             ALLRDropletMoreViewController *viewController = [[ALLRDropletMoreViewController alloc] initWithParent:self];
             [self.navigationController pushViewController:viewController animated:YES];
         }
@@ -153,18 +173,23 @@ static BOOL stringIsValidName(NSString *string){
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             break;
         case 2:
+            cell.textLabel.text = @"Size";
+            cell.detailTextLabel.text = [[ALLRMiscellaneousAPIInfoManager sharedManager] sizeStringForSizeID:self.droplet.sizeID];
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            break;
+        case 3:
             cell.textLabel.text = @"Public IP Address";
             cell.detailTextLabel.text = self.droplet.IP;
             break;
-        case 3:
+        case 4:
             cell.textLabel.text = @"Private IP Address";
             cell.detailTextLabel.text = [self.droplet.privateIP isEqualToString:@""] ? @"n/a" : self.droplet.privateIP;
             break;
-        case 4:
+        case 5:
             cell.textLabel.text = @"Backups Enabled";
             cell.detailTextLabel.text = self.droplet.backupsActive ? @"Yes" : @"No";
             break;
-        case 5:
+        case 6:
             cell.textLabel.text = @"More";
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             break;
@@ -203,6 +228,69 @@ static BOOL stringIsValidName(NSString *string){
 
 - (UIStatusBarStyle)preferredStatusBarStyle{
     return UIStatusBarStyleLightContent;
+}
+
+- (void)cancelButtonTapped{
+    [UIView animateWithDuration:0.25f animations:^{
+        pv.frame = (CGRect){{0, pv.frame.origin.y+244},{pv.bounds.size.width, pv.bounds.size.height}};
+        toolbar.frame = (CGRect){{0, toolbar.frame.origin.y+244},{pv.bounds.size.width, toolbar.bounds.size.height}};
+    }completion:^(BOOL finished){
+        if(finished){
+            [pv removeFromSuperview];
+            [toolbar removeFromSuperview];
+            self.tableViewController.tableView.userInteractionEnabled = YES;
+            pv = nil;
+        }
+    }];
+}
+
+- (void)doneButtonTapped{
+    [UIView animateWithDuration:0.25f animations:^{
+        pv.frame = (CGRect){{0, pv.frame.origin.y+244},{pv.bounds.size.width, pv.bounds.size.height}};
+        toolbar.frame = (CGRect){{0, toolbar.frame.origin.y+244},{pv.bounds.size.width, toolbar.bounds.size.height}};
+    }completion:^(BOOL finished){
+        if(finished){
+            [pv removeFromSuperview];
+            [toolbar removeFromSuperview];
+            self.tableViewController.tableView.userInteractionEnabled = YES;
+            NSUInteger index = [pv selectedRowInComponent:0];
+            NSUInteger id = [[ALLRMiscellaneousAPIInfoManager sharedManager].sizes[index][@"id"] unsignedIntegerValue];
+            UIActionSheet *as = [[UIActionSheet alloc] initWithTitle:@"Resizing your droplet will shut down your droplet and perform a \"fast resize\", and will affect the number of processors and memory allocated to the droplet. This may take up to one minute."
+                                                            delegate:nil
+                                                   cancelButtonTitle:@"Cancel"
+                                              destructiveButtonTitle:nil
+                                                   otherButtonTitles:@"Resize",nil];
+            
+            as.actionSheetStyle = UIActionSheetStyleAutomatic;
+            as.tapBlock = ^(UIActionSheet *actionSheet, NSInteger buttonIndex){
+                if(buttonIndex==0){
+                    self.droplet.status = @"Resizing";
+                    [self.tableViewController.tableView reloadData];
+                    [[ALLRDropletManager sharedManager] resizeDroplet:self.droplet toSize:id completion:^(BOOL completion){
+                        self.droplet.status = @"off";
+                    }];
+                }
+            };
+            [as showInView:self.view];
+            pv = nil;
+        }
+    }];
+}
+
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView{
+    return 1;
+}
+
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
+    return [[[ALLRMiscellaneousAPIInfoManager sharedManager].sizes[row][@"name"] stringByReplacingOccurrencesOfString:@"MB" withString:@" MB"] stringByReplacingOccurrencesOfString:@"GB" withString:@" GB"]; //This isn't at all unstable. Nope. No way. Impossible.
+}
+
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component{
+    return [[ALLRMiscellaneousAPIInfoManager sharedManager].sizes count];
+}
+
+- (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component{
+    return self.view.bounds.size.width;
 }
 
 @end

@@ -16,10 +16,7 @@
 
 #import "ALLRDropletDetailViewController.h"
 
-@interface ALLRDropletMoreViewController : UIViewController <UIPickerViewDataSource, UIPickerViewDelegate, UITableViewDataSource, UITableViewDelegate>{
-    UIToolbar *toolbar;
-    UIPickerView *pv;
-}
+@interface ALLRDropletMoreViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
 - (instancetype)initWithParent:(ALLRDropletDetailViewController *)parent;
 

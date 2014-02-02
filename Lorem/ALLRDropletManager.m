@@ -109,6 +109,10 @@ static dispatch_once_t token;
             [self invokeCompletion:^(BOOL success){droplet.locked = NO; if(completion) completion(success);}whenEventFinishes:[responseObject[@"event_id"] unsignedIntegerValue]];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+        if(operation.response.statusCode == 401){
+            if(completion) completion(NO);
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+        }
         NSLog(@"%@", error);
     }];
 }
@@ -139,6 +143,10 @@ static dispatch_once_t token;
                 [self invokeCompletion:^(BOOL success){droplet.locked = NO; if(completion) completion(success);}whenEventFinishes:[responseObject[@"event_id"] unsignedIntegerValue]];
             }
         } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+            if(operation.response.statusCode == 401){
+                if(completion) completion(NO);
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+            }
             NSLog(@"%@", error);
         }];
     }];
@@ -170,6 +178,10 @@ static dispatch_once_t token;
                 [self invokeCompletion:^(BOOL success){droplet.locked = NO; if(completion) completion(success);}whenEventFinishes:[responseObject[@"event_id"] unsignedIntegerValue]];
             }
         } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+            if(operation.response.statusCode == 401){
+                if(completion) completion(NO);
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+            }
             NSLog(@"%@", error);
         }];
     }];
@@ -197,6 +209,10 @@ static dispatch_once_t token;
             }*/ whenEventFinishes:[responseObject[@"event_id"] unsignedIntegerValue]];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+        if(operation.response.statusCode == 401){
+            if(completion) completion(NO);
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+        }
         NSLog(@"%@", error);
     }];
 }
@@ -220,7 +236,11 @@ static dispatch_once_t token;
             droplet.locked = YES;
             [self invokeCompletion:^(BOOL success){droplet.locked = NO; if(completion) completion(success); } whenEventFinishes:[responseObject[@"event_id"] unsignedIntegerValue]];
         }
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+        if(operation.response.statusCode == 401){
+            if(completion) completion(NO);
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+        }
             NSLog(@"%@", error);
     }];
 }
@@ -250,8 +270,11 @@ static dispatch_once_t token;
             [self invokeCompletion:^(BOOL success){droplet.locked = NO; if(completion) completion(success);} whenEventFinishes:[responseObject[@"event_id"] unsignedIntegerValue]];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+        if(operation.response.statusCode == 401){
+            if(completion) completion(NO);
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+        }
         completion(NO);
-        NSLog(@"%@", error);
     }];
 }
 
@@ -276,6 +299,10 @@ static dispatch_once_t token;
             [self invokeCompletion:^(BOOL success){droplet.locked = NO; if(completion) completion(success);} whenEventFinishes:[responseObject[@"event_id"] unsignedIntegerValue]];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+        if(operation.response.statusCode == 401){
+            if(completion) completion(NO);
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+        }
         NSLog(@"%@", error);
     }];
 }
@@ -304,6 +331,10 @@ static dispatch_once_t token;
             [self invokeCompletion:^(BOOL success){droplet.locked = NO; if(completion) completion(success);} whenEventFinishes:[responseObject[@"event_id"] unsignedIntegerValue]];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+        if(operation.response.statusCode == 401){
+            if(completion) completion(NO);
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+        }
         NSLog(@"%@", error);
     }];
 }
@@ -332,7 +363,11 @@ static dispatch_once_t token;
             [self invokeCompletion:^(BOOL success){droplet.locked = NO; if(completion) completion(success);} whenEventFinishes:[responseObject[@"event_id"] unsignedIntegerValue]];
         }
         else if(completion) completion(NO);
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+        if(operation.response.statusCode == 401){
+            if(completion) completion(NO);
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+        }
             if(completion) completion(NO);
         }];
     
@@ -367,7 +402,10 @@ static dispatch_once_t token;
             [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/dropletManagerDidUpdate" object:nil ];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error){
-        NSLog(@"Error: %@", error);
+        if(operation.response.statusCode == 401){
+            if(completion) completion(NO);
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+        }
         if(completion) completion(NO);
     }];
 }

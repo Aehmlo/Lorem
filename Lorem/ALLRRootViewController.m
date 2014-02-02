@@ -77,13 +77,6 @@
     self.tableViewController.refreshControl.tintColor = [UIColor DOBlueColor];
     [self.tableViewController.refreshControl addTarget:self action:@selector(reloadTableData) forControlEvents:UIControlEventValueChanged];
     [self.view addSubview:self.tableViewController.tableView];
-    [[ALLRDropletManager sharedManager] reloadDropletsWithCompletion:^(BOOL success){
-        if(success){
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.tableViewController.tableView reloadData];
-            });
-        }
-    }];
 }
 
 - (void)viewDidAppear:(BOOL)animated{
@@ -91,6 +84,14 @@
     if(![[ALLRCredentialManager sharedManager] hasCredentials]){
         ALLRLoginViewController *loginViewController = [[ALLRLoginViewController alloc] init];
         [self.navigationController pushViewController:loginViewController animated:YES];
+    }else{
+        [[ALLRDropletManager sharedManager] reloadDropletsWithCompletion:^(BOOL success){
+            if(success){
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.tableViewController.tableView reloadData];
+                });
+            }
+        }];
     }
 }
 

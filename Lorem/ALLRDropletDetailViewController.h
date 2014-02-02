@@ -13,7 +13,10 @@
 #import "UIActionSheet+Blocks.h"
 #import "UIColor+DOColors.h"
 
-@interface ALLRDropletDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface ALLRDropletDetailViewController : UIViewController <UIPickerViewDataSource, UIPickerViewDelegate, UITableViewDataSource, UITableViewDelegate>{
+    UIPickerView *pv;
+    UIToolbar *toolbar;
+}
 
 - (instancetype)initWithDroplet:(ALLRDroplet *)droplet;
 

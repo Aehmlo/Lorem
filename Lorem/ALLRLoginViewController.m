@@ -35,7 +35,7 @@
     }else{
         [[ALLRCredentialManager sharedManager] _setCredentials:@{@"ClientID": self.clientIDEntryField.text, @"APIKey": self.APIKeyEntryField.text} completion:^(BOOL successful){
             if(successful){
-                [self.navigationController popViewControllerAnimated:YES];
+                [self.navigationController popToRootViewControllerAnimated:NO];
             }
         }];
     }
@@ -109,7 +109,13 @@ static BOOL inputIsValid(NSString *input){
 	// Do any additional setup after loading the view.
 }
 
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    self.navigationItem.hidesBackButton = YES;
+}
+
 - (void)viewWillDisappear:(BOOL)animated{
+    self.navigationItem.hidesBackButton = NO;
     [super viewWillDisappear:animated];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/reloadDroplets" object:nil];
 }

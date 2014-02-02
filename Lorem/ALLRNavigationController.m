@@ -18,8 +18,8 @@
 - (void)requireLogin{
     ALLRLoginViewController *loginViewController = [[ALLRLoginViewController alloc] init];
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self popToRootViewControllerAnimated:YES];
-        [self pushViewController:loginViewController animated:YES];
+        [self popToRootViewControllerAnimated:NO];
+        [self pushViewController:loginViewController animated:NO];
     });
 }
 

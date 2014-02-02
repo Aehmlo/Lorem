@@ -15,7 +15,7 @@
 @implementation ALLRDropletMoreViewController
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return 4;
+    return 3;
 }
 
 - (void)dropletManagerDidUpdate{
@@ -28,7 +28,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if(self.droplet.locked) return;
     switch(indexPath.row){
-        case 1:{
+        case 0:{
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Enter Snapshot Name" message:nil delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"Take Snapshot", nil];
             alert.alertViewStyle = UIAlertViewStylePlainTextInput;
             [alert textFieldAtIndex:0].text = [NSString stringWithFormat:@"%@-%0.0f", self.droplet.name, [[NSDate date] timeIntervalSince1970]];
@@ -48,7 +48,7 @@
             };
             [alert show];
             break;
-        }case 2:{
+        }case 1:{
             UIActionSheet *as = [[UIActionSheet alloc] initWithTitle:@"Resetting your root password will reboot your droplet, and a new root password will be emailed to you. This cannot be undone."
                                                             delegate:nil
                                                    cancelButtonTitle:@"Cancel"
@@ -69,7 +69,7 @@
             };
             [as showInView:self.view];
             break;
-        }case 3:{
+        }case 2:{
             UIActionSheet *_as = [[UIActionSheet alloc] initWithTitle:@"Destroying a droplet cannot be undone. Please make sure you've backed up everything you need before continuing."
                                                             delegate:nil
                                                    cancelButtonTitle:@"Cancel"
@@ -99,76 +99,12 @@
             };
             [_as showInView:self.view];
             break;
-        }case 0:{
-            pv = [[UIPickerView alloc] initWithFrame:(CGRect){{0, self.view.bounds.size.height-200},{self.view.bounds.size.width, 200}}];
-            pv.delegate = self;
-            pv.dataSource = self;
-            pv.showsSelectionIndicator = YES;
-            [self.view addSubview:pv];
-            toolbar = [[UIToolbar alloc] initWithFrame:(CGRect){{0, self.view.bounds.size.height-244},{self.view.bounds.size.width, 44}}];
-            UIBarButtonItem *middleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-            UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancelButtonTapped)];
-            cancelButton.tintColor = [UIColor DOBlueColor];
-            UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(doneButtonTapped)];
-            doneButton.tintColor = [UIColor DOBlueColor];
-            [toolbar setItems:@[cancelButton, middleSpace, doneButton]];
-            [self.view addSubview:toolbar];
-            self.tableViewController.tableView.userInteractionEnabled = NO;
-            break;
         }
         default:
             break;
     }
 }
 
-- (void)cancelButtonTapped{
-    [pv removeFromSuperview];
-    [toolbar removeFromSuperview];
-    self.tableViewController.tableView.userInteractionEnabled = YES;
-    pv = nil;
-}
-
-- (void)doneButtonTapped{
-    [pv removeFromSuperview];
-    [toolbar removeFromSuperview];
-    self.tableViewController.tableView.userInteractionEnabled = YES;
-    NSUInteger index = [pv selectedRowInComponent:0];
-    NSUInteger id = [[ALLRMiscellaneousAPIInfoManager sharedManager].sizes[index][@"id"] unsignedIntegerValue];
-    UIActionSheet *as = [[UIActionSheet alloc] initWithTitle:@"Resizing your droplet will shut down your droplet and perform a \"fast resize\", and will affect the number of processors and memory allocated to the droplet. This may take up to one minute."
-                                                    delegate:nil
-                                           cancelButtonTitle:@"Cancel"
-                                      destructiveButtonTitle:nil
-                                           otherButtonTitles:@"Resize",nil];
-    
-    as.actionSheetStyle = UIActionSheetStyleAutomatic;
-    as.tapBlock = ^(UIActionSheet *actionSheet, NSInteger buttonIndex){
-        if(buttonIndex==0){
-            self.droplet.status = @"Resizing";
-            [self.parent.tableViewController.tableView reloadData];
-            [[ALLRDropletManager sharedManager] resizeDroplet:self.droplet toSize:id completion:^(BOOL completion){
-                self.droplet.status = @"off";
-            }];
-        }
-    };
-    [as showInView:self.view];
-    pv = nil;
-}
-
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView{
-    return 1;
-}
-
-- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
-    return [[[ALLRMiscellaneousAPIInfoManager sharedManager].sizes[row][@"name"] stringByReplacingOccurrencesOfString:@"MB" withString:@" MB"] stringByReplacingOccurrencesOfString:@"GB" withString:@" GB"]; //This isn't at all unstable. Nope. No way. Impossible.
-}
-
-- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component{
-    return [[ALLRMiscellaneousAPIInfoManager sharedManager].sizes count];
-}
-
-- (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component{
-    return self.view.bounds.size.width;
-}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ALLRDropletDetailTableViewCell"];
@@ -177,19 +113,15 @@
     cell.separatorInset = UIEdgeInsetsZero;
     switch (indexPath.row) {
         case 0:
-            cell.textLabel.text = @"Resize";
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            break;
-        case 1:
             cell.textLabel.text = @"Take Snapshot";
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             break;
-        case 2:
+        case 1:
             cell.textLabel.text = @"Reset Root Password";
             cell.textLabel.textColor = [UIColor DORedColor];
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             break;
-        case 3:
+        case 2:
             cell.textLabel.text = @"Destroy Droplet";
             cell.textLabel.textColor = [UIColor DORedColor];
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;

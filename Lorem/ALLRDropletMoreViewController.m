@@ -15,7 +15,7 @@
 @implementation ALLRDropletMoreViewController
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return 2;
+    return 4;
 }
 
 - (void)dropletManagerDidUpdate{
@@ -29,6 +29,26 @@
     if(self.droplet.locked) return;
     switch(indexPath.row){
         case 1:{
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Enter Snapshot Name" message:nil delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"Take Snapshot", nil];
+            alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+            [alert textFieldAtIndex:0].text = [NSString stringWithFormat:@"%@-%0.0f", self.droplet.name, [[NSDate date] timeIntervalSince1970]];
+            alert.shouldEnableFirstOtherButtonBlock = ^BOOL(UIAlertView *alertView){
+                return ([[alertView textFieldAtIndex:0].text length]>0);
+            };
+            alert.tapBlock = ^(UIAlertView *alertView, NSInteger buttonIndex){
+                 if(buttonIndex == alertView.firstOtherButtonIndex){
+                     self.parent.droplet.status = @"Snapshot in progress";
+                     [self.parent.tableViewController.tableView reloadData];
+                     [[ALLRDropletManager sharedManager] takeSnapshotOfDroplet:self.droplet withName:[alertView textFieldAtIndex:0].text?:@"" completion:^(BOOL completed){
+                         [[ALLRDropletManager sharedManager] reloadDropletsWithCompletion:^(BOOL completion){
+                             [self.parent.tableViewController.tableView reloadData];
+                         }];
+                     }];
+                 }
+            };
+            [alert show];
+            break;
+        }case 2:{
             UIActionSheet *as = [[UIActionSheet alloc] initWithTitle:@"Resetting your root password will reboot your droplet, and a new root password will be emailed to you. This cannot be undone."
                                                             delegate:nil
                                                    cancelButtonTitle:@"Cancel"
@@ -82,6 +102,25 @@
     [pv removeFromSuperview];
     [toolbar removeFromSuperview];
     self.tableViewController.tableView.userInteractionEnabled = YES;
+    NSUInteger index = [pv selectedRowInComponent:0];
+    NSUInteger id = [[ALLRMiscellaneousAPIInfoManager sharedManager].sizes[index][@"id"] unsignedIntegerValue];
+    UIActionSheet *as = [[UIActionSheet alloc] initWithTitle:@"Resizing your droplet will shut down your droplet and perform a \"fast resize\", and will affect the number of processors and memory allocated to the droplet. This may take up to one minute."
+                                                    delegate:nil
+                                           cancelButtonTitle:@"Cancel"
+                                      destructiveButtonTitle:nil
+                                           otherButtonTitles:@"Resize",nil];
+    
+    as.actionSheetStyle = UIActionSheetStyleAutomatic;
+    as.tapBlock = ^(UIActionSheet *actionSheet, NSInteger buttonIndex){
+        if(buttonIndex==0){
+            self.droplet.status = @"Resizing";
+            [self.parent.tableViewController.tableView reloadData];
+            [[ALLRDropletManager sharedManager] resizeDroplet:self.droplet toSize:id completion:^(BOOL completion){
+                self.droplet.status = @"off";
+            }];
+        }
+    };
+    [as showInView:self.view];
     pv = nil;
 }
 
@@ -112,10 +151,18 @@
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             break;
         case 1:
+            cell.textLabel.text = @"Take Snapshot";
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            break;
+        case 2:
             cell.textLabel.text = @"Reset Root Password";
             cell.textLabel.textColor = [UIColor DORedColor];
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             break;
+        case 3:
+            cell.textLabel.text = @"Destroy Droplet";
+            cell.textLabel.textColor = [UIColor DORedColor];
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         default:
             break;
     }

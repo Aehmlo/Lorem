@@ -10,6 +10,7 @@
 
 #import "ALLRRootViewController.h"
 #import "ALLRNavigationController.h"
+#import "ALLRMiscellaneousAPIInfoManager.h"
 
 @interface ALLRAppDelegate : UIResponder <UIApplicationDelegate>
 

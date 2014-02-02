@@ -27,6 +27,8 @@
 - (void)shutDownDroplet:(ALLRDroplet *)droplet completion:(void (^)(BOOL))completion;
 - (void)bootDroplet:(ALLRDroplet *)droplet completion:(void (^)(BOOL))completion;
 
+- (void)resizeDroplet:(ALLRDroplet *)droplet toSize:(NSUInteger)size completion:(void (^)(BOOL))completion;
+- (void)takeSnapshotOfDroplet:(ALLRDroplet *)droplet withName:(NSString *)name completion:(void (^)(BOOL))completion;
 - (void)resetRootPasswordForDroplet:(ALLRDroplet *)droplet completion:(void (^)(BOOL))completion;
 
 - (ALLRDroplet *)dropletWithID:(NSUInteger)id;

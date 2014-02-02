@@ -84,6 +84,58 @@ static dispatch_once_t token;
     });
 }
 
+- (void)takeSnapshotOfDroplet:(ALLRDroplet *)droplet withName:(NSString *)name completion:(void (^)(BOOL))completion{
+    [self shutDownDroplet:droplet completion:^(BOOL _completion){
+        if(!_completion){
+            if(completion) completion(NO);
+            return;
+        }
+        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        if(![[ALLRCredentialManager sharedManager] hasCredentials]){
+            if(completion) completion(NO);
+            return;
+        }
+        NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjects:@[[[ALLRCredentialManager sharedManager] clientID], [[ALLRCredentialManager sharedManager] APIKey]] forKeys:@[@"client_id",@"api_key"]];
+        if(name && ![name isEqualToString:@""] && [name rangeOfCharacterFromSet:[[NSCharacterSet whitespaceCharacterSet] invertedSet]].location != NSNotFound){
+            [params setObject:name forKey:@"name"];
+        }
+        [manager GET:[NSString stringWithFormat:@"https://api.digitalocean.com/droplets/%lu/snapshot", (unsigned long)droplet.id] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject){
+            if([responseObject[@"status"] isEqualToString:@"OK"]){
+                droplet.locked = YES;
+                [self invokeCompletion:^(BOOL success){droplet.locked = NO; if(completion) completion(success);}whenEventFinishes:[responseObject[@"event_id"] unsignedIntegerValue]];
+            }
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+            NSLog(@"%@", error);
+        }];
+    }];
+}
+
+- (void)resizeDroplet:(ALLRDroplet *)droplet toSize:(NSUInteger)size completion:(void (^)(BOOL))completion{
+    [self shutDownDroplet:droplet completion:^(BOOL _completion){
+        if(!completion){
+            if(completion) completion(NO);
+            return;
+        }
+        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        if(![[ALLRCredentialManager sharedManager] hasCredentials]){
+            if(completion) completion(NO);
+            return;
+        }
+        NSDictionary *params = @{@"client_id": [[ALLRCredentialManager sharedManager] clientID],
+                                 @"api_key": [[ALLRCredentialManager sharedManager] APIKey],
+                                 @"size_id" : @(size)
+                                 };
+        [manager GET:[NSString stringWithFormat:@"https://api.digitalocean.com/droplets/%lu/resize", (unsigned long)droplet.id] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject){
+            if([responseObject[@"status"] isEqualToString:@"OK"]){
+                droplet.locked = YES;
+                [self invokeCompletion:^(BOOL success){droplet.locked = NO; if(completion) completion(success);}whenEventFinishes:[responseObject[@"event_id"] unsignedIntegerValue]];
+            }
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+            NSLog(@"%@", error);
+        }];
+    }];
+}
+
 - (void)shutDownDroplet:(ALLRDroplet *)droplet completion:(void (^)(BOOL))completion{
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     if(![[ALLRCredentialManager sharedManager] hasCredentials]){

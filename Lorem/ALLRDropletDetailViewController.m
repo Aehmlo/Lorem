@@ -8,6 +8,12 @@
 
 #import "ALLRDropletDetailViewController.h"
 
+@interface ALLRDropletMoreViewController : UIViewController
+
+- (instancetype)initWithParent:(ALLRDropletDetailViewController *)parent;
+
+@end
+
 @implementation ALLRDropletDetailViewController
 
 static BOOL stringIsValidName(NSString *string){

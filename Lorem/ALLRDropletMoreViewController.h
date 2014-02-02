@@ -16,21 +16,15 @@
 
 #import "ALLRDropletDetailViewController.h"
 
-#if 0
-Yes, I did really just forward-declare my own class.
-Because apparently #importing the header isn't enough for Xcode.
-Why must Xcode suck so much?
-#endif
-
 @interface ALLRDropletMoreViewController : UIViewController <UIPickerViewDataSource, UIPickerViewDelegate, UITableViewDataSource, UITableViewDelegate>{
     UIToolbar *toolbar;
     UIPickerView *pv;
 }
 
-- (instancetype)initWithParent:(id)parent; //Can't use ALLRDropletDetailViewController because Xcode doesn't recognize it as a type.
+- (instancetype)initWithParent:(ALLRDropletDetailViewController *)parent;
 
 @property (nonatomic, retain) ALLRDroplet *droplet;
-@property (nonatomic, retain) id parent; //See line 26.
+@property (nonatomic, retain) ALLRDropletDetailViewController *parent;
 @property (nonatomic, retain) UITableViewController *tableViewController;
 
 @end

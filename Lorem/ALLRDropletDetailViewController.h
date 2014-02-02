@@ -12,7 +12,6 @@
 #import "UIAlertView+Blocks.h"
 #import "UIActionSheet+Blocks.h"
 #import "UIColor+DOColors.h"
-#import "ALLRDropletMoreViewController.h"
 
 @interface ALLRDropletDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 

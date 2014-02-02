@@ -270,6 +270,7 @@ static BOOL stringIsValidName(NSString *string){
                     [self.tableViewController.tableView reloadData];
                     [[ALLRDropletManager sharedManager] resizeDroplet:self.droplet toSize:id completion:^(BOOL completion){
                         self.droplet.status = @"off";
+                        [self.tableViewController.tableView reloadData];
                     }];
                 }
             };

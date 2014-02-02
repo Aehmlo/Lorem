@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import "ALLRKeychainWrapper.h"
+#import "ALLRMiscellaneousAPIInfoManager.h"
 
 @interface ALLRCredentialManager : NSObject
 

@@ -17,7 +17,6 @@
     self.window.rootViewController = navigationController;
     [self.window addSubview:rootViewController.view];
     [self.window makeKeyAndVisible];
-    [ALLRMiscellaneousAPIInfoManager sharedManager]; //This is /totally/ a logical place for this.
     return YES;
 }
 

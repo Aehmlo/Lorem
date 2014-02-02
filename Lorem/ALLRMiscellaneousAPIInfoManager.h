@@ -18,7 +18,11 @@
 
 - (void)updateAll;
 - (void)updateSizesWithCompletion:(void (^)(BOOL success))completion;
+- (void)updateMyImagesWithCompletion:(void (^)(BOOL success))completion;
+- (void)updateGlobalImagesWithCompletion:(void (^)(BOOL success))completion;
 
 @property (nonatomic, retain) NSArray *sizes;
+@property (nonatomic, retain) NSArray *myImages;
+@property (nonatomic, retain) NSArray *globalImages;
 
 @end

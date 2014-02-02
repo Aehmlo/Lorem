@@ -36,6 +36,7 @@ static dispatch_once_t token;
     [self.keychainWrapper setObject:credentials[@"ClientID"] forKey:(__bridge id)kSecAttrAccount];
     [self.keychainWrapper setObject:credentials[@"APIKey"] forKey:(__bridge id)kSecAttrDescription];
     if(completion) completion(YES);
+    [[ALLRMiscellaneousAPIInfoManager sharedManager] updateAll];
 }
 
 - (BOOL)hasCredentials{

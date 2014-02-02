@@ -51,6 +51,7 @@
     [self.tableViewController.refreshControl beginRefreshing];
     [[ALLRDropletManager sharedManager] reloadDropletsWithCompletion:^(BOOL success){
         if(success){
+            [ALLRMiscellaneousAPIInfoManager sharedManager];
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self.tableViewController.tableView reloadData];
                 [self.tableViewController.refreshControl endRefreshing];

@@ -26,7 +26,59 @@ static ALLRMiscellaneousAPIInfoManager *sharedManager; //Wow, that's a mouthful.
 }
 
 - (void)updateAll{
-    [self updateSizesWithCompletion:nil];
+    [self updateSizesWithCompletion:^(BOOL success){
+        if(success){
+            [self updateMyImagesWithCompletion:^(BOOL _success){
+                if(_success){
+                    [self updateGlobalImagesWithCompletion:^(BOOL __success){
+                        return;
+                    }];
+                }
+            }];
+        }
+    }];
+}
+
+- (void)updateMyImagesWithCompletion:(void (^)(BOOL success))completion{
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    if(![[ALLRCredentialManager sharedManager] hasCredentials]){
+        if(completion) completion(NO);
+        return;
+    }
+    NSDictionary *params = @{@"client_id": [[ALLRCredentialManager sharedManager] clientID],
+                             @"api_key": [[ALLRCredentialManager sharedManager] APIKey],
+                             @"filter": @"my_images"
+                             };
+    [manager GET:@"https://api.digitalocean.com/images" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject){
+        if([responseObject[@"status"] isEqualToString:@"OK"]){
+            self.myImages = responseObject[@"images"];
+            if (completion) completion(YES);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+        completion(NO);
+        NSLog(@"%@", error);
+    }];
+}
+
+- (void)updateGlobalImagesWithCompletion:(void (^)(BOOL success))completion{
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    if(![[ALLRCredentialManager sharedManager] hasCredentials]){
+        if(completion) completion(NO);
+        return;
+    }
+    NSDictionary *params = @{@"client_id": [[ALLRCredentialManager sharedManager] clientID],
+                             @"api_key": [[ALLRCredentialManager sharedManager] APIKey],
+                             @"filter": @"global"
+                             };
+    [manager GET:@"https://api.digitalocean.com/images" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject){
+        if([responseObject[@"status"] isEqualToString:@"OK"]){
+            self.globalImages = responseObject[@"images"];
+            if (completion) completion(YES);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+        completion(NO);
+        NSLog(@"%@", error);
+    }];
 }
 
 - (void)updateSizesWithCompletion:(void (^)(BOOL success))completion{

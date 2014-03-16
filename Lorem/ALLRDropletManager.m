@@ -117,6 +117,40 @@ static dispatch_once_t token;
     }];
 }
 
+- (void)createDroplet:(ALLRHypotheticalDroplet *)droplet completion:(void (^)(BOOL))completion{
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    if(![[ALLRCredentialManager sharedManager] hasCredentials]){
+        if(completion) completion(NO);
+        return;
+    }
+    NSMutableDictionary *params = [@{@"client_id": [[ALLRCredentialManager sharedManager] clientID],
+                             @"api_key": [[ALLRCredentialManager sharedManager] APIKey],
+                             @"name" : droplet.name,
+                             @"size_id" : @(droplet.sizeID),
+                             @"image_id" : @(droplet.imageID),
+                             @"region_id" : @(droplet.regionID)
+                             } mutableCopy];
+    if(droplet.keyID) params[@"ssh_key_ids"] = [NSString stringWithFormat:@"%lu", (unsigned long)droplet.keyID];
+    if(droplet.enableBackups) params[@"backups_enabled"] = @YES;
+    if(droplet.enablePrivateNetworking) params[@"private_networking"] = @YES;
+    [manager GET:@"https://api.digitalocean.com/droplets/new" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject){
+        if(operation.response.statusCode == 401){
+            if(completion) completion(NO);
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+            return;
+        }
+        else if([responseObject[@"status"] isEqualToString:@"OK"]){
+            droplet.locked = YES;
+            [self invokeCompletion:^(BOOL success){droplet.locked = NO; if(completion) completion(success);}whenEventFinishes:[responseObject[@"event_id"] unsignedIntegerValue]];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+        if(operation.response.statusCode == 401){
+            if(completion) completion(NO);
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"com.aehmlo.lorem/loginRequired" object:nil];
+        }
+    }];
+}
+
 - (void)takeSnapshotOfDroplet:(ALLRDroplet *)droplet withName:(NSString *)name completion:(void (^)(BOOL))completion{
     [self shutDownDroplet:droplet completion:^(BOOL _completion){
         if(!_completion){

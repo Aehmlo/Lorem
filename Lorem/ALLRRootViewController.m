@@ -79,8 +79,14 @@
     [self.view addSubview:self.tableViewController.tableView];
 }
 
+- (void)addDroplet{
+    ALLRNewDropletViewController *newViewController = [[ALLRNewDropletViewController alloc] init];
+    [self.navigationController pushViewController:newViewController animated:YES];
+}
+
 - (void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
+    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addDroplet)]];
     if(![[ALLRCredentialManager sharedManager] hasCredentials]){
         ALLRLoginViewController *loginViewController = [[ALLRLoginViewController alloc] init];
         [self.navigationController pushViewController:loginViewController animated:YES];

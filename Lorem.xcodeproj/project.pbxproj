@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3603A45718D4EA940092B550 /* ALLRHypotheticalDroplet.m in Sources */ = {isa = PBXBuildFile; fileRef = 3603A45618D4EA930092B550 /* ALLRHypotheticalDroplet.m */; };
+		3603A45A18D4F2D50092B550 /* ALLRDropletCreationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3603A45918D4F2D50092B550 /* ALLRDropletCreationViewController.m */; };
+		3603C50C18D5197400C6CAA7 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3603C50B18D5197400C6CAA7 /* GameKit.framework */; };
+		3603C50E18D5197F00C6CAA7 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3603C50D18D5197F00C6CAA7 /* StoreKit.framework */; };
 		36FEDE2F18975AB00076497E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36FEDE2E18975AB00076497E /* Foundation.framework */; };
 		36FEDE3118975AB00076497E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36FEDE3018975AB00076497E /* CoreGraphics.framework */; };
 		36FEDE3318975AB00076497E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36FEDE3218975AB00076497E /* UIKit.framework */; };
@@ -31,6 +35,8 @@
 		36FEDE7D189C3BE50076497E /* ALLRKeychainWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 36FEDE7C189C3BE50076497E /* ALLRKeychainWrapper.m */; };
 		36FEDE81189D7A050076497E /* ALLRLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 36FEDE80189D7A050076497E /* ALLRLoginViewController.m */; };
 		36FEDE83189E10420076497E /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36FEDE82189E10420076497E /* Security.framework */; };
+		36FEDE8618A064060076497E /* ALLRNewDropletViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 36FEDE8518A064060076497E /* ALLRNewDropletViewController.m */; };
+		36FEDE8918A1E3E10076497E /* ALLRPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 36FEDE8818A1E3E10076497E /* ALLRPickerView.m */; };
 		E4A99390A05B44CEA0FC799B /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1875B6329C8A4FD18F0CEFDB /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -47,6 +53,12 @@
 /* Begin PBXFileReference section */
 		1875B6329C8A4FD18F0CEFDB /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		228EDC543C734A178C8E1C04 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
+		3603A45518D4EA930092B550 /* ALLRHypotheticalDroplet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALLRHypotheticalDroplet.h; sourceTree = "<group>"; };
+		3603A45618D4EA930092B550 /* ALLRHypotheticalDroplet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALLRHypotheticalDroplet.m; sourceTree = "<group>"; };
+		3603A45818D4F2D50092B550 /* ALLRDropletCreationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALLRDropletCreationViewController.h; sourceTree = "<group>"; };
+		3603A45918D4F2D50092B550 /* ALLRDropletCreationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALLRDropletCreationViewController.m; sourceTree = "<group>"; };
+		3603C50B18D5197400C6CAA7 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
+		3603C50D18D5197F00C6CAA7 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		36FEDE2B18975AB00076497E /* Lorem.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lorem.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36FEDE2E18975AB00076497E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		36FEDE3018975AB00076497E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -87,6 +99,10 @@
 		36FEDE7F189D7A050076497E /* ALLRLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALLRLoginViewController.h; sourceTree = "<group>"; };
 		36FEDE80189D7A050076497E /* ALLRLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALLRLoginViewController.m; sourceTree = "<group>"; };
 		36FEDE82189E10420076497E /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		36FEDE8418A064060076497E /* ALLRNewDropletViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALLRNewDropletViewController.h; sourceTree = "<group>"; };
+		36FEDE8518A064060076497E /* ALLRNewDropletViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALLRNewDropletViewController.m; sourceTree = "<group>"; };
+		36FEDE8718A1E3E10076497E /* ALLRPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ALLRPickerView.h; sourceTree = "<group>"; };
+		36FEDE8818A1E3E10076497E /* ALLRPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ALLRPickerView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,8 +111,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				36FEDE83189E10420076497E /* Security.framework in Frameworks */,
+				3603C50E18D5197F00C6CAA7 /* StoreKit.framework in Frameworks */,
 				36FEDE3118975AB00076497E /* CoreGraphics.framework in Frameworks */,
 				36FEDE3318975AB00076497E /* UIKit.framework in Frameworks */,
+				3603C50C18D5197400C6CAA7 /* GameKit.framework in Frameworks */,
 				36FEDE2F18975AB00076497E /* Foundation.framework in Frameworks */,
 				E4A99390A05B44CEA0FC799B /* libPods.a in Frameworks */,
 			);
@@ -138,6 +156,8 @@
 		36FEDE2D18975AB00076497E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3603C50D18D5197F00C6CAA7 /* StoreKit.framework */,
+				3603C50B18D5197400C6CAA7 /* GameKit.framework */,
 				36FEDE82189E10420076497E /* Security.framework */,
 				36FEDE2E18975AB00076497E /* Foundation.framework */,
 				36FEDE3018975AB00076497E /* CoreGraphics.framework */,
@@ -156,10 +176,18 @@
 				36FEDE3E18975AB00076497E /* ALLRAppDelegate.m */,
 				36FEDE69189775DD0076497E /* ALLRNavigationController.h */,
 				36FEDE6A189775DD0076497E /* ALLRNavigationController.m */,
+				36FEDE8418A064060076497E /* ALLRNewDropletViewController.h */,
+				36FEDE8518A064060076497E /* ALLRNewDropletViewController.m */,
+				3603A45818D4F2D50092B550 /* ALLRDropletCreationViewController.h */,
+				3603A45918D4F2D50092B550 /* ALLRDropletCreationViewController.m */,
+				36FEDE8718A1E3E10076497E /* ALLRPickerView.h */,
+				36FEDE8818A1E3E10076497E /* ALLRPickerView.m */,
 				36FEDE661897685B0076497E /* ALLRCredentialManager.h */,
 				36FEDE671897685B0076497E /* ALLRCredentialManager.m */,
 				36FEDE6018975E7A0076497E /* ALLRDroplet.h */,
 				36FEDE6118975E7A0076497E /* ALLRDroplet.m */,
+				3603A45518D4EA930092B550 /* ALLRHypotheticalDroplet.h */,
+				3603A45618D4EA930092B550 /* ALLRHypotheticalDroplet.m */,
 				36FEDE751898C29F0076497E /* ALLRDropletMoreViewController.h */,
 				36FEDE761898C2A00076497E /* ALLRDropletMoreViewController.m */,
 				36FEDE781898CCE40076497E /* ALLRMiscellaneousAPIInfoManager.h */,
@@ -264,8 +292,14 @@
 					36FEDE2A18975AB00076497E = {
 						DevelopmentTeam = H9JF73K4BX;
 						SystemCapabilities = {
-							com.apple.Keychain = {
+							com.apple.GameCenter = {
 								enabled = 1;
+							};
+							com.apple.InAppPurchase = {
+								enabled = 1;
+							};
+							com.apple.Keychain = {
+								enabled = 0;
 							};
 						};
 					};
@@ -353,16 +387,20 @@
 				36FEDE7D189C3BE50076497E /* ALLRKeychainWrapper.m in Sources */,
 				36FEDE7118977F6B0076497E /* ALLRDropletDetailViewController.m in Sources */,
 				36FEDE5F18975B610076497E /* ALLRRootViewController.m in Sources */,
+				36FEDE8618A064060076497E /* ALLRNewDropletViewController.m in Sources */,
 				36FEDE681897685B0076497E /* ALLRCredentialManager.m in Sources */,
 				36FEDE771898C2A00076497E /* ALLRDropletMoreViewController.m in Sources */,
 				36FEDE81189D7A050076497E /* ALLRLoginViewController.m in Sources */,
+				3603A45718D4EA940092B550 /* ALLRHypotheticalDroplet.m in Sources */,
 				36FEDE6E1897770F0076497E /* UIColor+DOColors.m in Sources */,
+				3603A45A18D4F2D50092B550 /* ALLRDropletCreationViewController.m in Sources */,
 				36FEDE6218975E7A0076497E /* ALLRDroplet.m in Sources */,
 				36FEDE65189762DD0076497E /* ALLRDropletManager.m in Sources */,
 				36FEDE7A1898CCE40076497E /* ALLRMiscellaneousAPIInfoManager.m in Sources */,
 				36FEDE3B18975AB00076497E /* main.m in Sources */,
 				36FEDE3F18975AB00076497E /* ALLRAppDelegate.m in Sources */,
 				36FEDE6B189775DD0076497E /* ALLRNavigationController.m in Sources */,
+				36FEDE8918A1E3E10076497E /* ALLRPickerView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -484,13 +522,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_ENTITLEMENTS = Lorem/Lorem.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Kristi Hamilton (H9JF73K4BX)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Kristi Hamilton (H9JF73K4BX)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Lorem/Lorem-Prefix.pch";
 				INFOPLIST_FILE = "Lorem/Lorem-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "11F138F2-66F2-4665-9F31-459ECD05EEBC";
+				PROVISIONING_PROFILE = "D30A5341-31EE-4130-B362-38E0BC2F7A15";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -501,13 +539,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_ENTITLEMENTS = Lorem/Lorem.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Kristi Hamilton (H9JF73K4BX)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Kristi Hamilton (H9JF73K4BX)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Lorem/Lorem-Prefix.pch";
 				INFOPLIST_FILE = "Lorem/Lorem-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "11F138F2-66F2-4665-9F31-459ECD05EEBC";
+				PROVISIONING_PROFILE = "D30A5341-31EE-4130-B362-38E0BC2F7A15";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

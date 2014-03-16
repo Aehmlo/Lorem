@@ -12,6 +12,8 @@
 #import "ALLRDropletDetailViewController.h"
 #import "ALLRLoginViewController.h"
 
+#import "ALLRNewDropletViewController.h"
+
 #import "UIColor+DOColors.h"
 
 @interface ALLRRootViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>

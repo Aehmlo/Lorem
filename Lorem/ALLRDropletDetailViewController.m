@@ -17,7 +17,7 @@
 @implementation ALLRDropletDetailViewController
 
 static BOOL stringIsValidName(NSString *string){
-    NSCharacterSet *_s = [NSCharacterSet characterSetWithCharactersInString:@"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-+"];
+    NSCharacterSet *_s = [NSCharacterSet characterSetWithCharactersInString:@"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-"];
     NSCharacterSet *s = [_s invertedSet];
     NSRange r = [string rangeOfCharacterFromSet:s];
     return (r.location == NSNotFound);
@@ -125,26 +125,55 @@ static BOOL stringIsValidName(NSString *string){
             }
             break;
         }case 2:{
-            pv = [[UIPickerView alloc] initWithFrame:(CGRect){{0, self.view.bounds.size.height+44},{self.view.bounds.size.width, 200}}];
-            pv.delegate = self;
-            pv.dataSource = self;
-            pv.showsSelectionIndicator = YES;
-            [pv reloadAllComponents];
-            [pv selectRow:[[ALLRMiscellaneousAPIInfoManager sharedManager] indexForSizeID:self.droplet.sizeID] inComponent:0 animated:NO];
+            __weak ALLRDropletDetailViewController *weakSelf = self;
+            pv = [[ALLRPickerView alloc] initWithFrame:(CGRect){{0, self.view.bounds.size.height-244}, {self.view.bounds.size.width, 244}}];
+            pv.cancelButtonBlock = ^(ALLRPickerView *pickerView){
+                [pickerView dismiss];
+                weakSelf.tableViewController.tableView.userInteractionEnabled = YES;
+            };
+            pv.numberOfRowsBlock = ^NSInteger(UIPickerView *pickerView, NSInteger component){
+                return [[ALLRMiscellaneousAPIInfoManager sharedManager].sizes count];
+            };
+            pv.doneButtonBlock = ^(ALLRPickerView *pickerView){
+                NSUInteger index = [pickerView.pickerView selectedRowInComponent:0];
+                NSUInteger id = [[ALLRMiscellaneousAPIInfoManager sharedManager].sizes[index][@"id"] unsignedIntegerValue];
+                UIActionSheet *as = [[UIActionSheet alloc] initWithTitle:@"Resizing your droplet will shut down your droplet and perform a \"fast resize\", and will affect the number of processors and memory allocated to the droplet. This may take up to one minute."
+                                                                delegate:nil
+                                                       cancelButtonTitle:@"Cancel"
+                                                  destructiveButtonTitle:nil
+                                                       otherButtonTitles:@"Resize",nil];
+                
+                as.actionSheetStyle = UIActionSheetStyleAutomatic;
+                as.tapBlock = ^(UIActionSheet *actionSheet, NSInteger buttonIndex){
+                    if(buttonIndex==0){
+                        weakSelf.droplet.status = @"Resizing";
+                        [weakSelf.tableViewController.tableView reloadData];
+                        [[ALLRDropletManager sharedManager] resizeDroplet:weakSelf.droplet toSize:id completion:^(BOOL completion){
+                            weakSelf.droplet.status = @"off";
+                            [weakSelf.tableViewController.tableView reloadData];
+                        }];
+                    }
+                };
+                [as showInView:weakSelf.view];
+            };
+            pv.numberOfComponentsBlock = ^NSInteger(UIPickerView *picker){
+                return 1;
+            };
+            pv.titleForRowBlock = ^NSString *(UIPickerView *picker, NSInteger row, NSInteger component){
+                return [[[ALLRMiscellaneousAPIInfoManager sharedManager].sizes[row][@"name"] stringByReplacingOccurrencesOfString:@"MB" withString:@" MB"] stringByReplacingOccurrencesOfString:@"GB" withString:@" GB"]; //This isn't at all unstable. Nope. No way. Impossible.
+            };
+            pv.componentWidthBlock = ^CGFloat(UIPickerView *pickerView, NSInteger component){
+                return weakSelf.view.bounds.size.width;
+            };
+            pv.rowHeightBlock = ^CGFloat(UIPickerView *pickerView, NSInteger row){
+                return 30;
+            };
+            [pv.pickerView reloadAllComponents];
+            [pv.pickerView selectRow:[[ALLRMiscellaneousAPIInfoManager sharedManager] indexForSizeID:self.droplet.sizeID] inComponent:0 animated:NO];
             [self.view addSubview:pv];
-            toolbar = [[UIToolbar alloc] initWithFrame:(CGRect){{0, self.view.bounds.size.height},{self.view.bounds.size.width, 44}}];
-            UIBarButtonItem *middleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-            UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancelButtonTapped)];
-            cancelButton.tintColor = [UIColor DOBlueColor];
-            UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(doneButtonTapped)];
-            doneButton.tintColor = [UIColor DOBlueColor];
-            [toolbar setItems:@[cancelButton, middleSpace, doneButton]];
-            [self.view addSubview:toolbar];
+            [pv dismiss];
             self.tableViewController.tableView.userInteractionEnabled = NO;
-            [UIView animateWithDuration:0.25f animations:^{
-                pv.frame = (CGRect){{0, pv.frame.origin.y-244},{pv.frame.size.width, pv.frame.size.height}};
-                toolbar.frame = (CGRect){{0, toolbar.frame.origin.y-244},{toolbar.frame.size.width, toolbar.frame.size.height}};
-            }];
+            [pv animateIn];
             break;
         }case 6:{
             ALLRDropletMoreViewController *viewController = [[ALLRDropletMoreViewController alloc] initWithParent:self];
@@ -230,70 +259,6 @@ static BOOL stringIsValidName(NSString *string){
 
 - (UIStatusBarStyle)preferredStatusBarStyle{
     return UIStatusBarStyleLightContent;
-}
-
-- (void)cancelButtonTapped{
-    [UIView animateWithDuration:0.25f animations:^{
-        pv.frame = (CGRect){{0, pv.frame.origin.y+244},{pv.bounds.size.width, pv.bounds.size.height}};
-        toolbar.frame = (CGRect){{0, toolbar.frame.origin.y+244},{pv.bounds.size.width, toolbar.bounds.size.height}};
-    }completion:^(BOOL finished){
-        if(finished){
-            [pv removeFromSuperview];
-            [toolbar removeFromSuperview];
-            self.tableViewController.tableView.userInteractionEnabled = YES;
-            pv = nil;
-        }
-    }];
-}
-
-- (void)doneButtonTapped{
-    [UIView animateWithDuration:0.25f animations:^{
-        pv.frame = (CGRect){{0, pv.frame.origin.y+244},{pv.bounds.size.width, pv.bounds.size.height}};
-        toolbar.frame = (CGRect){{0, toolbar.frame.origin.y+244},{pv.bounds.size.width, toolbar.bounds.size.height}};
-    }completion:^(BOOL finished){
-        if(finished){
-            [pv removeFromSuperview];
-            [toolbar removeFromSuperview];
-            self.tableViewController.tableView.userInteractionEnabled = YES;
-            NSUInteger index = [pv selectedRowInComponent:0];
-            NSUInteger id = [[ALLRMiscellaneousAPIInfoManager sharedManager].sizes[index][@"id"] unsignedIntegerValue];
-            UIActionSheet *as = [[UIActionSheet alloc] initWithTitle:@"Resizing your droplet will shut down your droplet and perform a \"fast resize\", and will affect the number of processors and memory allocated to the droplet. This may take up to one minute."
-                                                            delegate:nil
-                                                   cancelButtonTitle:@"Cancel"
-                                              destructiveButtonTitle:nil
-                                                   otherButtonTitles:@"Resize",nil];
-            
-            as.actionSheetStyle = UIActionSheetStyleAutomatic;
-            as.tapBlock = ^(UIActionSheet *actionSheet, NSInteger buttonIndex){
-                if(buttonIndex==0){
-                    self.droplet.status = @"Resizing";
-                    [self.tableViewController.tableView reloadData];
-                    [[ALLRDropletManager sharedManager] resizeDroplet:self.droplet toSize:id completion:^(BOOL completion){
-                        self.droplet.status = @"off";
-                        [self.tableViewController.tableView reloadData];
-                    }];
-                }
-            };
-            [as showInView:self.view];
-            pv = nil;
-        }
-    }];
-}
-
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView{
-    return 1;
-}
-
-- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
-    return [[[ALLRMiscellaneousAPIInfoManager sharedManager].sizes[row][@"name"] stringByReplacingOccurrencesOfString:@"MB" withString:@" MB"] stringByReplacingOccurrencesOfString:@"GB" withString:@" GB"]; //This isn't at all unstable. Nope. No way. Impossible.
-}
-
-- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component{
-    return [[ALLRMiscellaneousAPIInfoManager sharedManager].sizes count];
-}
-
-- (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component{
-    return self.view.bounds.size.width;
 }
 
 @end

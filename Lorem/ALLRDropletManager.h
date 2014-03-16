@@ -12,6 +12,7 @@
 #import "AFHTTPRequestOperation.h"
 #import "ALLRCredentialManager.h"
 #import "ALLRDroplet.h"
+#import "ALLRHypotheticalDroplet.h"
 
 @interface ALLRDropletManager : NSObject{
     NSTimer *eventTimer;
@@ -19,6 +20,7 @@
 
 + (instancetype)sharedInstance;
 + (instancetype)sharedManager;
+
 
 - (void)reloadDropletsWithCompletion:(void (^)(BOOL))completion;
 - (void)renameDroplet:(ALLRDroplet *)droplet to:(NSString *)name completion:(void (^)(BOOL))completion;
@@ -31,6 +33,7 @@
 - (void)takeSnapshotOfDroplet:(ALLRDroplet *)droplet withName:(NSString *)name completion:(void (^)(BOOL))completion;
 - (void)resetRootPasswordForDroplet:(ALLRDroplet *)droplet completion:(void (^)(BOOL))completion;
 
+- (void)createDroplet:(ALLRHypotheticalDroplet *)droplet completion:(void (^)(BOOL))completion;
 - (void)destroyDroplet:(ALLRDroplet *)droplet completion:(void (^)(BOOL))completion; //Be very careful with this.
 
 - (ALLRDroplet *)dropletWithID:(NSUInteger)id;
